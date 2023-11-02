@@ -1,4 +1,4 @@
-module CoreServices
+module github.com/PANetworks/CoreServices
 
 go 1.21.3
 
