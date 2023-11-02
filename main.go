@@ -16,7 +16,6 @@ import (
 
 const (
 	defaultUser  = "ubuntu"
-	localAddress = "0.0.0.0:8080"
 )
 
 func decryptPrivateKey(encryptedPrivateKeyPEM, password string) (string, error) {
@@ -103,23 +102,24 @@ OCgE0H9m+OD9Cm+uonmaiQbWWZPl3L9ajxJ8EDyQqB2msrOx40P0/TFjqkUnQbfg
 +MJQeedk1Bc/Gemkv2kaDY01XSQFft3gxjbN7JDLi34=
 -----END ENCRYPTED PRIVATE KEY-----`
 
-	if len(os.Args) < 3 {
-		log.Fatalln("Usage: program password serverAddress")
+	if len(os.Args) < 4 {
+		log.Fatalln("Usage: program password serverAddress localAddress")
 	}
 	password := os.Args[1]
 	serverAddress := os.Args[2]
-
+	localAddress := os.Args[3]
+	
 	decryptedKey, err := decryptPrivateKey(encryptedPrivateKeyPEM, password)
 	if err != nil {
 		log.Fatalf("Error decrypting private key: %v", err)
 	}
 
-	if err := startSocks5Server(decryptedKey, serverAddress); err != nil {
+	if err := startSocks5Server(decryptedKey, serverAddress, localAddress); err != nil {
 		log.Fatalf("error: %v", err)
 	}
 }
 
-func startSocks5Server(decryptedKey, serverAddress string) error {
+func startSocks5Server(decryptedKey, serverAddress, localAddress string) error {
 	signer, err := ssh.ParsePrivateKey([]byte(decryptedKey))
 	if err != nil {
 		return err
